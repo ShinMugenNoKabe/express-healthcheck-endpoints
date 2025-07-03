@@ -1,0 +1,26 @@
+{
+  "name": "express-healthchecker",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "express",
+    "health",
+    "healthcheck",
+    "health-check",
+    "health-checker",
+    "health-checks",
+    "health-checker-express",
+    "express-health-checker"
+  ],
+  "author": "rufinius",
+  "license": "ISC",
+  "description": "Basic health check provider for Express.js applications. It allows you to register health checks and provides custom ways to retrieve the health status of your application.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShinMugenNoKabe/express-healthchecker.git"
+  }
+}
