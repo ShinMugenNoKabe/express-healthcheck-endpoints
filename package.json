@@ -1,5 +1,5 @@
 {
-  "name": "express-healthchecker",
+  "name": "express-healthcheck-endpoints",
   "version": "0.1.0",
   "type": "module",
   "main": "index.js",
@@ -21,6 +21,6 @@
   "description": "Basic health check provider for Express.js applications. It allows you to register health checks and provides custom ways to retrieve the health status of your application.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ShinMugenNoKabe/express-healthchecker.git"
+    "url": "git+https://github.com/ShinMugenNoKabe/express-healthcheck-endpoints.git"
   }
 }
