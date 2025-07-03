@@ -1,6 +1,6 @@
 {
   "name": "express-healthcheck-endpoints",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -22,5 +22,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ShinMugenNoKabe/express-healthcheck-endpoints.git"
+  },
+  "exports": {
+    "./healthCheck": "./src/healthCheck.js",
+    "./registry": "./src/registry.js",
+    "./healthEnums": "./src/healthEnums.js"
   }
 }

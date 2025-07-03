@@ -1,0 +1,21 @@
+{
+  "name": "express-healthcheck-endpoints-demo",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "rufinius",
+  "license": "ISC",
+  "description": "Demo project for the express-healthcheck-endpoints package. It demonstrates how to use the health check endpoints in an Express.js application.",
+  "dependencies": {
+    "express": "5.1.0",
+    "express-healthcheck-endpoints": "^0.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShinMugenNoKabe/express-healthcheck-endpoints.git"
+  }
+}
