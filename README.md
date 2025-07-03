@@ -175,7 +175,7 @@ app.listen(PORT, () => {
 }
 ```
 
-### Supported Values
+## Supported Values
 
 There is a module that contains every supported value in the API. Example:
 
@@ -203,7 +203,7 @@ app.listen(PORT, () => {
 });
 ```
 
-### Configuration
+## Configuration
 
 | Option | Type | Remarks | Required | Default Value | Allowed Values |
 | ------ | ---- | ------- | :------: | ------------- | -------------- |
