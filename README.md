@@ -54,6 +54,11 @@ You can provide your own health check logic. See the below table for more inform
 ### Request
 
 ```js
+import express from "express";
+import HealthCheck from "express-healthcheck-endpoints/healthCheck";
+
+const app = express();
+
 const fetchHealthCheck = new HealthCheck({
     description: "Fetches data from an external API and checks if it responds successfully",
     timeFormat: "unix",
@@ -75,6 +80,12 @@ const fetchHealthCheck = new HealthCheck({
 });
 
 app.get("/health/fetch", await fetchHealthCheck.handler());
+
+const PORT = 3_000;
+
+app.listen(PORT, () => {
+    console.log(`Server listening on http://localhost:${PORT}`);
+});
 ```
 
 ### Response
@@ -111,7 +122,6 @@ const simpleUnixHealthCheck = new HealthCheck({
     description: "This is a simple check with Unix time format",
 });
 registry.register("simpleUnix", simpleUnixHealthCheck);
-
 
 const unhealthyHealthCheck = new HealthCheck({
     description: "This is an unhealthy check",
@@ -196,10 +206,10 @@ app.listen(PORT, () => {
 ### Configuration
 
 | Option | Type | Remarks | Required | Default Value | Allowed Values |
-| ------ | ---- | ------- | -------- | ------------- | -------------- |
+| ------ | ---- | ------- | :------: | ------------- | -------------- |
 | [`timeFormat`] | `string` | The time format used in the response for the `timestamp` field. | ❌ | [`"iso"`] | [`"iso"`], [`"unix"`], [`"utc"`], [`"calendar"`] |
 | [`description`] | `string` | Description of the health check shown in the response. | ❌ | [`undefined`] | |
-| [`callback`] | `function` | Callback function by the health check function to check if it goes successfully or not. This callback **must be [`async`]**, takes no arguments and **must return an object containing the [`status`] and [`statusCode`] attributes**. | ❌ | [`() => ({ status: healthStatusValues.healthy, statusCode: healthStatusCodes.healthy, })`] | |
+| [`callback`] | `function` | Callback function used by the health check function to check if it goes successfully or not. This callback may or may not be [`async`], takes no arguments and **must return an object containing the [`status`] and [`statusCode`] attributes**. | ❌ | [`() => ({ status: healthStatusValues.healthy, statusCode: healthStatusCodes.healthy, })`] | **[`status`]:** [`healthy`], [`unhealthy`], [`unknown`] <br/><br/>  **[`statusCode`]:** [`200`], [`503`], [`500`] |
 
 ## License
 
