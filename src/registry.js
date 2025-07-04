@@ -21,6 +21,28 @@ class HealthCheckRegistry {
             }));
     }
 
+    getOverallStatusResponse(healthChecks) {
+        // Determine overall status
+        const areAllUnknown = healthChecks.length === 0 || healthChecks.every(r => r.isUnknown());
+        const hasUnhealthy = healthChecks.some(r => r.isUnhealthy());
+
+        let overallStatus = healthStatusValues.healthy;
+        let overallStatusCode = healthStatusCodes.healthy
+
+        if (areAllUnknown) {
+            overallStatus = healthStatusValues.unknown;
+            overallStatusCode = healthStatusCodes.unknown;
+        } else if (hasUnhealthy) {
+            overallStatus = healthStatusValues.unhealthy;
+            overallStatusCode = healthStatusCodes.unhealthy;
+        }
+
+        return {
+            overallStatus,
+            overallStatusCode,
+        }
+    }
+
     async handler() {
         return async (_, res) => {
             const arrResults = await Promise.all(this.getResults());
@@ -28,25 +50,10 @@ class HealthCheckRegistry {
 
             const healthChecks = Array.from(this.checks.values());
 
-            // Determine overall status
-            const areAllUnknown = healthChecks.length === 0 || healthChecks.every(r => r.isUnknown());
-            const hasUnhealthy = healthChecks.some(r => r.isUnhealthy());
-
-            let overallStatus = healthStatusValues.healthy;
-            let overallStatusCode = healthStatusCodes.healthy
-
-            if (areAllUnknown) {
-                overallStatus = healthStatusValues.unknown;
-                overallStatusCode = healthStatusCodes.unknown;
-            } else if (hasUnhealthy) {
-                overallStatus = healthStatusValues.unhealthy;
-                overallStatusCode = healthStatusCodes.unhealthy;
-            }
-
             return res
                 .status(overallStatusCode)
                 .json({
-                    overallStatus: overallStatus,
+                    ...getOverallStatusResponse(healthChecks),
                     uptime: process.uptime(),
                     results,
                 });

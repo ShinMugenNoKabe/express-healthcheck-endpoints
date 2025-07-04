@@ -6,18 +6,22 @@ class HealthCheck {
             throw new Error("Invalid description provided. Must be a string.");
         }
 
-        if (callback === null || callback === undefined) {
-            callback = () => ({
-                status: healthStatusValues.healthy,
-            });
-        }
-
         timeFormat = timeFormat || timeFormats.iso;
 
         const VALID_TIME_FORMATS = Object.values(timeFormats);
 
         if (timeFormat && !VALID_TIME_FORMATS.includes(timeFormat)) {
             throw new Error(`Invalid timeFormat provided. Must be one of: ${VALID_TIME_FORMATS.join(", ")}.`);
+        }
+
+        if (callback !== null && callback !== undefined && typeof callback !== "function") {
+            throw new Error("Invalid callback provided. Must be a function.");
+        }
+
+        if (callback === null || callback === undefined) {
+            callback = () => ({
+                status: healthStatusValues.healthy,
+            });
         }
 
         this.description = description;
@@ -37,15 +41,15 @@ class HealthCheck {
         return this.status === healthStatusValues.unknown
     }
 
-    getTimestamp() {
+    getTimestamp(date) {
         if (this.timeFormat === timeFormats.iso) {
-            return new Date().toISOString();
+            return date.toISOString();
         } else if (this.timeFormat === timeFormats.utc) {
-            return new Date().toUTCString();
+            return date.toUTCString();
         } else if (this.timeFormat === timeFormats.unix) {
-            return Math.floor(Date.now() / 1_000);
+            return Math.floor(date.getTime() / 1_000);
         } else if (this.timeFormat === timeFormats.calendar) {
-            return new Date().toLocaleString();
+            return date.toLocaleString();
         }
 
         return null;
@@ -91,7 +95,7 @@ class HealthCheck {
             description: this.description || undefined,
             status: this.status,
             statusCode: this.statusCode,
-            timestamp: this.getTimestamp(),
+            timestamp: this.getTimestamp(new Date()),
             processTime,
             uptime: process.uptime(),
         }

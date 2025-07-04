@@ -1,10 +1,10 @@
 {
   "name": "express-healthcheck-endpoints",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "keywords": [
     "express",
@@ -27,5 +27,9 @@
     "./healthCheck": "./src/healthCheck.js",
     "./registry": "./src/registry.js",
     "./healthEnums": "./src/healthEnums.js"
+  },
+  "devDependencies": {
+    "expect.js": "0.3.1",
+    "mocha": "11.7.1"
   }
 }
