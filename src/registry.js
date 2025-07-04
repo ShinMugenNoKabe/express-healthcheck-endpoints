@@ -49,11 +49,13 @@ class HealthCheckRegistry {
             const results = Object.assign({}, ...arrResults);
 
             const healthChecks = Array.from(this.checks.values());
+            const { overallStatus, overallStatusCode } = this.getOverallStatusResponse(healthChecks);
 
             return res
                 .status(overallStatusCode)
                 .json({
-                    ...getOverallStatusResponse(healthChecks),
+                    overallStatus,
+                    overallStatusCode,
                     uptime: process.uptime(),
                     results,
                 });
