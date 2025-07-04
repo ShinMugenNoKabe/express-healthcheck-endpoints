@@ -9,7 +9,6 @@ class HealthCheck {
         if (callback === null || callback === undefined) {
             callback = () => ({
                 status: healthStatusValues.healthy,
-                statusCode: healthStatusCodes.healthy,
             });
         }
 
@@ -54,16 +53,13 @@ class HealthCheck {
 
     async callCallbackFunction() {
         let resultStatus = null;
-        let resultCode = null;
 
         try {
             const callbackResults = await this.callback();
 
             resultStatus = (callbackResults.status || healthStatusValues.healthy).toLowerCase();
-            resultCode = callbackResults.statusCode || healthStatusCodes.healthy;
         } catch (error) {
             resultStatus = healthStatusValues.unhealthy;
-            resultCode = healthStatusCodes.unhealthy
         }
 
         const VALID_STATUSES = Object.values(healthStatusValues);
@@ -73,18 +69,8 @@ class HealthCheck {
         }
 
         this.status = resultStatus;
-
-        if (resultCode && typeof resultCode !== "number") {
-            throw new Error("Invalid statusCode provided. Must be a number.");
-        }
         
-        if (resultCode) {
-            if (typeof resultCode !== "number") {
-                throw new Error("Invalid statusCode provided. Must be a number.");
-            }
-
-            this.statusCode = resultCode;
-        } else if (this.isHealthy()) {
+        if (this.isHealthy()) {
             this.statusCode = healthStatusCodes.healthy;
         } else if (this.isUnhealthy()) {
             this.statusCode = healthStatusCodes.unhealthy;

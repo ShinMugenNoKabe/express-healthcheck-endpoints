@@ -68,13 +68,11 @@ const fetchHealthCheck = new HealthCheck({
         if (!response.ok) {
             return {
                 status: "unhealthy",
-                statusCode: 503,
             };
         }
 
         return {
             status: "healthy",
-            statusCode: 200,
         };
     }
 });
@@ -127,7 +125,6 @@ const unhealthyHealthCheck = new HealthCheck({
     description: "This is an unhealthy check",
     callback: () => ({
         status: "unhealthy",
-        statusCode: 503,
     }),
 });
 registry.register("unhealthy", unhealthyHealthCheck);
@@ -190,7 +187,6 @@ const simpleHealthCheck = new HealthCheck({
     timeFormat: timeFormats.utc,
     callback: () => ({
         status: healthStatusValues.healthy,
-        statusCode: healthStatusCodes.healthy,
     }),
 });
 
@@ -209,7 +205,15 @@ app.listen(PORT, () => {
 | ------ | ---- | ------- | :------: | ------------- | -------------- |
 | [`timeFormat`] | `string` | The time format used in the response for the `timestamp` field. | ❌ | [`"iso"`] | [`"iso"`], [`"unix"`], [`"utc"`], [`"calendar"`] |
 | [`description`] | `string` | Description of the health check shown in the response. | ❌ | [`undefined`] | |
-| [`callback`] | `function` | Callback function used by the health check function to check if it goes successfully or not. This callback may or may not be [`async`], takes no arguments and **must return an object containing the [`status`] and [`statusCode`] attributes**. | ❌ | [`() => ({ status: healthStatusValues.healthy, statusCode: healthStatusCodes.healthy, })`] | **[`status`]:** [`healthy`], [`unhealthy`], [`unknown`] <br/><br/>  **[`statusCode`]:** [`200`], [`503`], [`500`] |
+| [`callback`] | `function` | Callback function used by the health check function to check if it goes successfully or not. This callback may or may not be [`async`], takes no arguments and **must return an object containing a [`status`] attribute**. If not provided, it is assumed that the health check is healthy. | ❌ | [`() => ({ status: healthStatusValues.healthy, })`] | **[`status`]:** [`healthy`], [`unhealthy`], [`unknown`] |
+
+### Statuses
+
+|     Status    | Result Status Code |      Description      |
+| :-----------: | :----------------: | :-------------------: |
+| **Healthy**   |         200        | OK                    |
+| **Unhealthy** |         503        | Service Unavailable   |
+| **Unknown**   |         500        | Internal Server Error |
 
 ## License
 
