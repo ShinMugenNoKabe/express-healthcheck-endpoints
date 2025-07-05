@@ -18,7 +18,7 @@ npm install express-healthcheck-endpoints
 
 ## Sample Usage
 
-### Request
+### Server
 
 ```js
 import express from "express";
@@ -35,15 +35,21 @@ app.listen(PORT, () => {
 });
 ```
 
+### Request
+
+```curl
+curl http://localhost:3000/health
+```
+
 ### Response
 
 ```json
 {
     "status": "healthy",
     "statusCode": 200,
-    "timestamp": "2025-07-03T22:22:17.384Z",
+    "timestamp": "2025-07-05T11:30:23.691Z",
     "processTime": 0,
-    "uptime": 733.1416337
+    "uptime": 10.1798468
 }
 ```
 
@@ -51,28 +57,29 @@ app.listen(PORT, () => {
 
 You can provide your own health check logic. See the below table for more information.
 
-### Request
+### Server
 
 ```js
 import express from "express";
 import HealthCheck from "express-healthcheck-endpoints/healthCheck";
+import { healthStatusValues, timeFormats } from "express-healthcheck-endpoints/healthEnums";
 
 const app = express();
 
 const fetchHealthCheck = new HealthCheck({
     description: "Fetches data from an external API and checks if it responds successfully",
-    timeFormat: "unix",
+    timeFormat: timeFormats.unix,
     callback: async () => {
         const response = await fetch("https://pokeapi.co/api/v2/pokemon/meowth");
 
         if (!response.ok) {
             return {
-                status: "unhealthy",
+                status: healthStatusValues.unhealthy,
             };
         }
 
         return {
-            status: "healthy",
+            status: healthStatusValues.healthy,
         };
     }
 });
@@ -86,15 +93,22 @@ app.listen(PORT, () => {
 });
 ```
 
+### Request
+
+```curl
+curl http://localhost:3000/health/fetch
+```
+
 ### Response
+
 ```json
 {
-    "description": "Fetches data from an external API",
+    "description": "Fetches data from an external API and checks if it responds successfully",
     "status": "healthy",
     "statusCode": 200,
-    "timestamp": "2025-07-03T22:26:16.465Z",
-    "processTime": 0.054,
-    "uptime": 972.2222452
+    "timestamp": 1751715071,
+    "processTime": 0.129,
+    "uptime": 5.8805614
 }
 ```
 
@@ -102,12 +116,13 @@ app.listen(PORT, () => {
 
 You can also group certain health check endpoints together in one single endpoint that will execute every health check set. Every health check must have its unique name.
 
-### Request
+### Server
 
 ```js
 import express from "express";
 import HealthCheck from "express-healthcheck-endpoints/healthCheck";
 import HealthCheckRegistry from "express-healthcheck-endpoints/registry";
+import { healthStatusValues, timeFormats } from "express-healthcheck-endpoints/healthEnums";
 
 const app = express();
 const registry = new HealthCheckRegistry();
@@ -116,7 +131,7 @@ const simpleHealthCheck = new HealthCheck();
 registry.register("simple", simpleHealthCheck);
 
 const simpleUnixHealthCheck = new HealthCheck({
-    timeFormat: "unix",
+    timeFormat: timeFormats.unix,
     description: "This is a simple check with Unix time format",
 });
 registry.register("simpleUnix", simpleUnixHealthCheck);
@@ -124,7 +139,7 @@ registry.register("simpleUnix", simpleUnixHealthCheck);
 const unhealthyHealthCheck = new HealthCheck({
     description: "This is an unhealthy check",
     callback: () => ({
-        status: "unhealthy",
+        status: healthStatusValues.unhealthy,
     }),
 });
 registry.register("unhealthy", unhealthyHealthCheck);
@@ -138,65 +153,126 @@ app.listen(PORT, () => {
 });
 ```
 
+### Request
+
+```curl
+curl http://localhost:3000/health/all
+```
+
 ### Response
 
 ```json
 {
     "overallStatus": "unhealthy",
-    "uptime": 8.3872264,
+    "overallStatusCode": 503,
+    "uptime": 5.3380016,
     "results": {
         "simple": {
             "status": "healthy",
             "statusCode": 200,
-            "timestamp": "2025-07-03T22:52:42.215Z",
+            "timestamp": "2025-07-05T11:32:15.678Z",
             "processTime": 0.001,
-            "uptime": 8.3870766
+            "uptime": 5.3378379
         },
         "simpleUnix": {
             "description": "This is a simple check with Unix time format",
             "status": "healthy",
             "statusCode": 200,
-            "timestamp": 1751583162,
+            "timestamp": 1751715135,
             "processTime": 0.002,
-            "uptime": 8.3870959
+            "uptime": 5.3378542
         },
         "unhealthy": {
             "description": "This is an unhealthy check",
             "status": "unhealthy",
             "statusCode": 503,
-            "timestamp": "2025-07-03T22:52:42.216Z",
+            "timestamp": "2025-07-05T11:32:15.679Z",
             "processTime": 0.002,
-            "uptime": 8.3871048
+            "uptime": 5.3378611
         }
     }
 }
 ```
 
-## Supported Values
+## Synchronous Endpoints
 
-There is a module that contains every supported value in the API. Example:
+In a context where the `await` keyword cannot be used, you can resolve every `handler` promise asynchronously and register the endpoint; for both single health checks and registries endpoints.
+
+### Server
 
 ```js
 import express from "express";
 import HealthCheck from "express-healthcheck-endpoints/healthCheck";
-import { healthStatusValues, healthStatusCodes, timeFormats } from "express-healthcheck-endpoints/healthEnums";
+import HealthCheckRegistry from "express-healthcheck-endpoints/registry";
+import { healthStatusValues, timeFormats } from "express-healthcheck-endpoints/healthEnums";
 
 const app = express();
+const registry = new HealthCheckRegistry();
 
-const simpleHealthCheck = new HealthCheck({
-    timeFormat: timeFormats.utc,
-    callback: () => ({
-        status: healthStatusValues.healthy,
-    }),
-});
+// Resolve promise asynchronously
+const simpleHealthCheck1 = new HealthCheck();
 
-app.get("/health", await simpleHealthCheck.handler());
+simpleHealthCheck1.handler()
+    .then(handler => {
+        app.get("/health/simple1", handler);
+    })
+    .catch(err => {
+        console.error("Error setting up health check handler:", err);
+    });
+
+registry.register("simple1", simpleHealthCheck1);
+
+// Resolve promise synchronously
+const simpleHealthCheck2 = new HealthCheck();
+app.get("/health/simple2", await simpleHealthCheck2.handler());
+registry.register("simple2", simpleHealthCheck2);
+
+// Resolve promise asynchronously
+registry.handler()
+    .then(handler => {
+        app.get("/health/all", handler);
+    })
+    .catch(err => {
+        console.error("Error setting up health check handler:", err);
+    });
 
 const PORT = 3_000;
 
 app.listen(PORT, () => {
     console.log(`Server listening on http://localhost:${PORT}`);
 });
+
+```
+### Request
+
+```curl
+curl http://localhost:3000/health/all
+```
+
+### Response
+
+```json
+{
+    "overallStatus": "healthy",
+    "overallStatusCode": 200,
+    "uptime": 3.2312097,
+    "results": {
+        "simple1": {
+            "status": "healthy",
+            "statusCode": 200,
+            "timestamp": "2025-07-05T11:49:42.695Z",
+            "processTime": 0.001,
+            "uptime": 3.2310578
+        },
+        "simple2": {
+            "status": "healthy",
+            "statusCode": 200,
+            "timestamp": "2025-07-05T11:49:42.696Z",
+            "processTime": 0.002,
+            "uptime": 3.2310708
+        }
+    }
+}
 ```
 
 ## Configuration

@@ -27,7 +27,7 @@ class HealthCheckRegistry {
         const hasUnhealthy = healthChecks.some(r => r.isUnhealthy());
 
         let overallStatus = healthStatusValues.healthy;
-        let overallStatusCode = healthStatusCodes.healthy
+        let overallStatusCode = healthStatusCodes.healthy;
 
         if (areAllUnknown) {
             overallStatus = healthStatusValues.unknown;

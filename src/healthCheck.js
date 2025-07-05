@@ -38,21 +38,18 @@ class HealthCheck {
     }
 
     isUnknown() {
-        return this.status === healthStatusValues.unknown
+        return this.status === healthStatusValues.unknown;
     }
 
     getTimestamp(date) {
-        if (this.timeFormat === timeFormats.iso) {
-            return date.toISOString();
-        } else if (this.timeFormat === timeFormats.utc) {
-            return date.toUTCString();
-        } else if (this.timeFormat === timeFormats.unix) {
-            return Math.floor(date.getTime() / 1_000);
-        } else if (this.timeFormat === timeFormats.calendar) {
-            return date.toLocaleString();
-        }
-
-        return null;
+        const datesMap = {
+            [timeFormats.iso]: date.toISOString(),
+            [timeFormats.utc]: date.toUTCString(),
+            [timeFormats.unix]: Math.floor(date.getTime() / 1_000),
+            [timeFormats.calendar]: date.toLocaleString(),
+        };
+        
+        return datesMap[this.timeFormat] || datesMap[timeFormats.iso];
     }
 
     async callCallbackFunction() {
