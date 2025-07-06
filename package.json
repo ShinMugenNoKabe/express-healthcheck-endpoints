@@ -1,6 +1,6 @@
 {
   "name": "express-healthcheck-endpoints",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -30,9 +30,9 @@
     "README.md"
   ],
   "exports": {
-    "./healthCheck": "./src/healthCheck.js",
-    "./registry": "./src/registry.js",
-    "./healthEnums": "./src/healthEnums.js"
+    "./healthCheck": "./lib/healthCheck.js",
+    "./registry": "./lib/registry.js",
+    "./healthEnums": "./lib/healthEnums.js"
   },
   "devDependencies": {
     "@babel/cli": "7.28.0",
