@@ -1,11 +1,12 @@
 {
   "name": "express-healthcheck-endpoints",
-  "version": "1.1.1",
+  "version": "1.1.3",
   "type": "module",
   "main": "index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
-    "test": "mocha"
+    "test": "mocha",
+    "pub": "npm run test && npm run build && npm publish"
   },
   "keywords": [
     "express",
@@ -17,8 +18,8 @@
     "health-checker-express",
     "express-health-checker"
   ],
-  "author": "rufinius",
-  "license": "ISC",
+  "author": "ShinMugenNoKabe",
+  "license": "MIT",
   "description": "Basic health check provider for Express.js applications. It allows you to register health checks and provides custom ways to retrieve the health status of your application.",
   "repository": {
     "type": "git",

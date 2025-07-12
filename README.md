@@ -37,7 +37,7 @@ app.listen(PORT, () => {
 
 ### Request
 
-```curl
+```bash
 curl http://localhost:3000/health
 ```
 
@@ -95,7 +95,7 @@ app.listen(PORT, () => {
 
 ### Request
 
-```curl
+```bash
 curl http://localhost:3000/health/fetch
 ```
 
@@ -155,7 +155,7 @@ app.listen(PORT, () => {
 
 ### Request
 
-```curl
+```bash
 curl http://localhost:3000/health/all
 ```
 
@@ -194,7 +194,7 @@ curl http://localhost:3000/health/all
 }
 ```
 
-## Synchronous Endpoints
+## Asynchronous Endpoints
 
 In a context where the `await` keyword cannot be used, you can resolve every `handler` promise asynchronously and register the endpoint; for both single health checks and registries endpoints.
 
@@ -245,7 +245,7 @@ app.listen(PORT, () => {
 ```
 ### Request
 
-```curl
+```bash
 curl http://localhost:3000/health/all
 ```
 
